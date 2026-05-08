@@ -37,7 +37,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
   const fetchMyOrders = useCallback(async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8070/api/orders/delivery/${deliveryBoy.id}`,
+        `https://smartshop-backend-64zl.onrender.com/api/orders/delivery/${deliveryBoy.id}`,
         { headers: getHeaders() }
       );
       setOrders(res.data.sort((a, b) => b.id - a.id));
@@ -47,7 +47,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
   const fetchRequests = useCallback(async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8070/api/orders/requests/${deliveryBoy.id}`,
+        `https://smartshop-backend-64zl.onrender.com/api/orders/requests/${deliveryBoy.id}`,
         { headers: getHeaders() }
       );
       setRequests(res.data.sort((a, b) => b.id - a.id));
@@ -57,8 +57,8 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
   const fetchShopsAndConnections = useCallback(async () => {
     try {
       const [shopsRes, connRes] = await Promise.all([
-        axios.get('http://localhost:8070/api/shops/all', { headers: getHeaders() }),
-        axios.get(`http://localhost:8070/api/connections/delivery/${deliveryBoy.id}`, { headers: getHeaders() })
+        axios.get('https://smartshop-backend-64zl.onrender.com/api/shops/all', { headers: getHeaders() }),
+        axios.get(`https://smartshop-backend-64zl.onrender.com/api/connections/delivery/${deliveryBoy.id}`, { headers: getHeaders() })
       ]);
       setShops(shopsRes.data);
       setMyConnections(connRes.data);
@@ -68,7 +68,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
   const fetchMyNotifications = useCallback(async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8070/api/notifications/${deliveryBoy.id}/DELIVERY`,
+        `https://smartshop-backend-64zl.onrender.com/api/notifications/${deliveryBoy.id}/DELIVERY`,
         { headers: getHeaders() }
       );
       setMyNotifications(res.data);
@@ -93,7 +93,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
   const acceptRequest = async (orderId) => {
     try {
       await axios.put(
-        `http://localhost:8070/api/orders/accept/${orderId}/${deliveryBoy.id}`,
+        `https://smartshop-backend-64zl.onrender.com/api/orders/accept/${orderId}/${deliveryBoy.id}`,
         {}, { headers: getHeaders() }
       );
       fetchRequests();
@@ -108,7 +108,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
   const rejectRequest = async (orderId) => {
     try {
       await axios.put(
-        `http://localhost:8070/api/orders/reject/${orderId}/${deliveryBoy.id}`,
+        `https://smartshop-backend-64zl.onrender.com/api/orders/reject/${orderId}/${deliveryBoy.id}`,
         {}, { headers: getHeaders() }
       );
       fetchRequests();
@@ -122,7 +122,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
     }
     try {
       await axios.post(
-        'http://localhost:8070/api/orders/verify-shop-otp',
+        'https://smartshop-backend-64zl.onrender.com/api/orders/verify-shop-otp',
         { orderId: shopOtpOrder.id, otp: shopOtpInput },
         { headers: getHeaders() }
       );
@@ -140,7 +140,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
   const updateStatus = async (orderId, status) => {
     try {
       await axios.put(
-        `http://localhost:8070/api/orders/status/${orderId}`,
+        `https://smartshop-backend-64zl.onrender.com/api/orders/status/${orderId}`,
         { status }, { headers: getHeaders() }
       );
       fetchMyOrders();
@@ -150,7 +150,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
   const requestShopConnection = async (shop) => {
     try {
       await axios.post(
-        'http://localhost:8070/api/connections/request',
+        'https://smartshop-backend-64zl.onrender.com/api/connections/request',
         { shopId: shop.id, shopName: shop.shopName, deliveryBoyId: deliveryBoy.id, deliveryBoyName: deliveryBoy.name },
         { headers: getHeaders() }
       );
@@ -166,7 +166,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
     try {
       const newStatus = !available;
       await axios.put(
-        `http://localhost:8070/api/delivery/availability/${deliveryBoy.id}`,
+        `https://smartshop-backend-64zl.onrender.com/api/delivery/availability/${deliveryBoy.id}`,
         { available: newStatus },
         { headers: getHeaders() }
       );
@@ -186,7 +186,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
   const deleteAccount = async () => {
     if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
       try {
-        await axios.delete(`http://localhost:8070/api/delivery/profile/${deliveryBoy.id}`, { headers: getHeaders() });
+        await axios.delete(`https://smartshop-backend-64zl.onrender.com/api/delivery/profile/${deliveryBoy.id}`, { headers: getHeaders() });
         onLogout();
       } catch (err) {
         showNotif('❌ Failed to delete account');
@@ -646,7 +646,7 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
                   onClick={async () => {
                     try {
                       await axios.put(
-                        `http://localhost:8070/api/notifications/read-all/${deliveryBoy.id}/DELIVERY`,
+                        `https://smartshop-backend-64zl.onrender.com/api/notifications/read-all/${deliveryBoy.id}/DELIVERY`,
                         {}, { headers: getHeaders() }
                       );
                       fetchMyNotifications();

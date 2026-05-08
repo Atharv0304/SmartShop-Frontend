@@ -18,7 +18,7 @@ const CustomerLogin = ({ onLogin }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('http://localhost:8070/api/customer/register', form);
+      await axios.post('https://smartshop-backend-64zl.onrender.com/api/customer/register', form);
       setMessage('✅ Registered! Please login.');
       setIsRegister(false);
       setError('');
@@ -33,7 +33,7 @@ const CustomerLogin = ({ onLogin }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:8070/api/customer/login', {
+      const res = await axios.post('https://smartshop-backend-64zl.onrender.com/api/customer/login', {
         email: form.email,
         password: form.password
       });

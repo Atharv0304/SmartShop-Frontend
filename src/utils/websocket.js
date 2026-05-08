@@ -5,7 +5,7 @@ let stompClient = null;
 
 export const connectWebSocket = (onNewOrder, onNotification) => {
   stompClient = new Client({
-    webSocketFactory: () => new SockJS('http://localhost:8070/ws'),
+    webSocketFactory: () => new SockJS('https://smartshop-backend-64zl.onrender.com/ws'),
     onConnect: () => {
       console.log('WebSocket connected!');
 

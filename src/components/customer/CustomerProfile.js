@@ -40,7 +40,7 @@ const CustomerProfile = ({ customer, onLogout }) => {
     if (!isPolling) setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:8070/api/orders/customer/${customer.id}`,
+        `https://smartshop-backend-64zl.onrender.com/api/orders/customer/${customer.id}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem('customerToken')}` }}
       );
       const sorted = [...res.data].sort((a, b) => b.id - a.id);
@@ -65,7 +65,7 @@ const CustomerProfile = ({ customer, onLogout }) => {
     setCancelling(true);
     try {
       await axios.put(
-        `http://localhost:8070/api/orders/cancel/${cancelModal.orderId}?customerId=${customer.id}&reason=${encodeURIComponent(cancelReason)}`,
+        `https://smartshop-backend-64zl.onrender.com/api/orders/cancel/${cancelModal.orderId}?customerId=${customer.id}&reason=${encodeURIComponent(cancelReason)}`,
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem('customerToken')}` }}
       );
@@ -108,7 +108,7 @@ const CustomerProfile = ({ customer, onLogout }) => {
   const handleDeleteAccount = async () => {
     if (window.confirm("⚠️ Are you sure you want to permanently delete your account? This action cannot be undone.")) {
       try {
-        await axios.delete(`http://localhost:8070/api/customer/profile/${customer.id}`, {
+        await axios.delete(`https://smartshop-backend-64zl.onrender.com/api/customer/profile/${customer.id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('customerToken')}` }
         });
         alert("Your account has been deleted successfully.");

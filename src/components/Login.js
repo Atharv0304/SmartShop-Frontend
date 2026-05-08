@@ -20,7 +20,7 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('http://localhost:8070/api/shopkeeper/send-otp',
+      await axios.post('https://smartshop-backend-64zl.onrender.com/api/shopkeeper/send-otp',
         { email: form.email });
       setMessage('✅ OTP sent to ' + form.email);
       setError('');
@@ -39,11 +39,11 @@ const Login = ({ onLogin }) => {
     setLoading(true);
     try {
       // Verify OTP
-      await axios.post('http://localhost:8070/api/shopkeeper/verify-otp',
+      await axios.post('https://smartshop-backend-64zl.onrender.com/api/shopkeeper/verify-otp',
         { email: form.email, otp });
 
       // Register
-      await axios.post('http://localhost:8070/api/shopkeeper/register', form);
+      await axios.post('https://smartshop-backend-64zl.onrender.com/api/shopkeeper/register', form);
 
       setMessage('✅ Registered successfully! Please login.');
       setError('');
@@ -63,7 +63,7 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:8070/api/shopkeeper/login', {
+      const res = await axios.post('https://smartshop-backend-64zl.onrender.com/api/shopkeeper/login', {
         email: form.email,
         password: form.password
       });

@@ -13,7 +13,7 @@ const DeliveryChargeCalculator = ({ shopLat, shopLng, custLat, custLng, onCharge
   const calculateCharge = async () => {
     try {
       const res = await axios.post(
-        'http://localhost:8070/api/orders/delivery-charge',
+        'https://smartshop-backend-64zl.onrender.com/api/orders/delivery-charge',
         { shopLat, shopLng, custLat, custLng }
       );
       setBreakdown(res.data);

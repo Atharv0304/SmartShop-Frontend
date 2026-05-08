@@ -4,7 +4,7 @@ import requests
 import datetime
 import numpy as np
 
-API_URL = "http://localhost:8070/api/products/scan"
+API_URL = "https://smartshop-backend-64zl.onrender.com/api/products/scan"
 
 def enhance_image(frame):
     # Convert to grayscale

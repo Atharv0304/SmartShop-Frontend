@@ -36,7 +36,7 @@ const DeliveryRegister = ({ onLogin }) => {
   const sendOtp = async () => {
     setLoading(true);
     try {
-      await axios.post('http://localhost:8070/api/delivery/send-otp', { email: form.email });
+      await axios.post('https://smartshop-backend-64zl.onrender.com/api/delivery/send-otp', { email: form.email });
       setStep(4);
       setError('');
     } catch (err) {
@@ -48,10 +48,10 @@ const DeliveryRegister = ({ onLogin }) => {
   const verifyAndRegister = async () => {
     setLoading(true);
     try {
-      await axios.post('http://localhost:8070/api/delivery/verify-otp', {
+      await axios.post('https://smartshop-backend-64zl.onrender.com/api/delivery/verify-otp', {
         email: form.email, otp
       });
-      await axios.post('http://localhost:8070/api/delivery/register', {
+      await axios.post('https://smartshop-backend-64zl.onrender.com/api/delivery/register', {
         ...form,
         age: parseInt(form.age)
       });
@@ -69,7 +69,7 @@ const DeliveryRegister = ({ onLogin }) => {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.post('http://localhost:8070/api/delivery/login', loginForm);
+      const res = await axios.post('https://smartshop-backend-64zl.onrender.com/api/delivery/login', loginForm);
       localStorage.setItem('deliveryToken', res.data.token);
       localStorage.setItem('deliveryBoy', JSON.stringify(res.data));
       onLogin(res.data);

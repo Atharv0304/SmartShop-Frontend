@@ -16,7 +16,7 @@ const OtpVerification = ({ order, onVerified }) => {
     setError('');
     try {
       await axios.post(
-        'http://localhost:8070/api/orders/verify-delivery-otp',
+        'https://smartshop-backend-64zl.onrender.com/api/orders/verify-delivery-otp',
         { orderId: order.id, otp },
         { headers: {
           Authorization: `Bearer ${localStorage.getItem('deliveryToken')}`
