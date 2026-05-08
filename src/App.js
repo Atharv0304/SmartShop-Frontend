@@ -1,23 +1,108 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import AddProduct from './components/AddProduct';
+import ProductList from './components/ProductList';
+import Dashboard from './components/Dashboard';
+import ExpiryAlerts from './components/ExpiryAlerts';
+import Login from './components/Login';
+import ShopRegister from './components/ShopRegister';
+import OrderManagement from './components/OrderManagement';
+import DeliveryManagement from './components/DeliveryManagement';
+import ShopkeeperProfile from './components/ShopkeeperProfile';
+import ChatBot from './components/customer/ChatBot';
 
 function App() {
+  const [shopkeeper, setShopkeeper] = useState(() => {
+    const saved = localStorage.getItem('shopkeeper');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [page, setPage] = useState('dashboard');
+
+  const handleLogin = (data) => {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('shopkeeper', JSON.stringify(data));
+    setShopkeeper(data);
+    setPage('dashboard');
+  };
+
+  const handleUpdate = (updatedData) => {
+    const newData = { ...shopkeeper, ...updatedData };
+    localStorage.setItem('shopkeeper', JSON.stringify(newData));
+    setShopkeeper(newData);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('shopkeeper');
+    setShopkeeper(null);
+  };
+
+  if (!shopkeeper) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="bg-gray-100 min-h-screen">
+      <nav className="glass sticky top-0 z-50 px-6 py-4 flex items-center justify-between shadow-sm">
+        <h1 className="text-2xl font-extrabold text-gradient flex items-center gap-2">
+          <span>🛒</span> Smart Store <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md ml-2 border border-emerald-200">Shopkeeper</span>
+        </h1>
+        <div className="flex gap-2 bg-gray-100/50 p-1 rounded-xl border border-gray-200/50 overflow-x-auto hide-scrollbar">
+          <button onClick={() => setPage('dashboard')}
+            className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${page === 'dashboard' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
+            🏠 Dashboard
+          </button>
+          <button onClick={() => setPage('list')}
+            className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${page === 'list' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
+            📦 Inventory
+          </button>
+          <button onClick={() => setPage('add')}
+            className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${page === 'add' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
+            ➕ Add Product
+          </button>
+          <button onClick={() => setPage('alerts')}
+            className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${page === 'alerts' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
+            🔔 Alerts
+          </button>
+          <button onClick={() => setPage('shop')}
+            className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${page === 'shop' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
+            🏪 My Shop
+          </button>
+          <button onClick={() => setPage('orders')}
+            className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${page === 'orders' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
+            📋 Orders
+          </button>
+          <button onClick={() => setPage('delivery')}
+            className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${page === 'delivery' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
+            🚴 Delivery
+          </button>
+          <button onClick={() => setPage('profile')}
+            className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${page === 'profile' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
+            👤 Profile
+          </button>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-bold text-gray-700 hidden md:block">
+            👤 {shopkeeper.name}
+          </span>
+          <button onClick={handleLogout}
+            className="bg-gray-100 hover:bg-rose-50 hover:text-rose-600 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold transition border border-gray-200 hover:border-rose-200">
+            Logout
+          </button>
+        </div>
+      </nav>
+
+      {page === 'dashboard' && <Dashboard shopkeeper={shopkeeper} />}
+      {page === 'list' && <ProductList shopkeeper={shopkeeper} />}
+      {page === 'add' && <AddProduct shopkeeper={shopkeeper} />}
+      {page === 'alerts' && <ExpiryAlerts shopkeeper={shopkeeper} />}
+      {page === 'shop' && <ShopRegister shopkeeper={shopkeeper} />}
+      {page === 'orders' && <OrderManagement shopkeeper={shopkeeper} />}
+      {page === 'delivery' && <DeliveryManagement shopkeeper={shopkeeper} />}
+      {page === 'profile' && <ShopkeeperProfile shopkeeper={shopkeeper} onUpdate={handleUpdate} onLogout={handleLogout} />}
+
+      {/* AI Chatbot */}
+      <ChatBot role="SHOPKEEPER" />
     </div>
   );
 }
