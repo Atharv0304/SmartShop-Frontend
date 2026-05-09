@@ -492,6 +492,16 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
                     </p>
                   </div>
 
+                  {/* COD Badge — always visible for cash orders */}
+                  {order.paymentMethod === 'CASH' && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-amber-600 font-bold text-sm">💵 Cash on Delivery</span>
+                      </div>
+                      <span className="text-amber-800 font-black text-lg">₹{order.totalAmount}</span>
+                    </div>
+                  )}
+
                   {order.status === 'DELIVERY_ACCEPTED' && (
                     <button onClick={() => { setShopOtpOrder(order); setShowShopOtpModal(true); }}
                       className="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md">
@@ -499,10 +509,21 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
                     </button>
                   )}
                   {order.status === 'OUT_FOR_DELIVERY' && (
-                    <button onClick={() => updateStatus(order.id, 'PICKED')}
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md">
-                      <Package className="w-5 h-5" /> Mark Picked Up
-                    </button>
+                    <div className="space-y-3">
+                      {order.paymentMethod === 'CASH' && (
+                        <div className="bg-red-50 text-red-700 border border-red-200 rounded-xl p-3 flex items-start gap-3">
+                          <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="font-bold text-sm">⚠️ Collect Cash from Customer</p>
+                            <p className="text-xs font-medium">Total to collect: <strong>₹{order.totalAmount}</strong></p>
+                          </div>
+                        </div>
+                      )}
+                      <button onClick={() => updateStatus(order.id, 'PICKED')}
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md">
+                        <Package className="w-5 h-5" /> Mark Picked Up
+                      </button>
+                    </div>
                   )}
                   {order.status === 'PICKED' && (
                     <div className="space-y-3">
@@ -510,8 +531,8 @@ const DeliveryDashboard = ({ deliveryBoy, onLogout }) => {
                         <div className="bg-red-50 text-red-700 border border-red-200 rounded-xl p-3 flex items-start gap-3">
                           <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
                           <div>
-                            <p className="font-bold text-sm">Cash on Delivery</p>
-                            <p className="text-xs font-medium">Collect exactly ₹{order.totalAmount + (order.deliveryCharge || 0)}</p>
+                            <p className="font-bold text-sm">💵 Collect Cash Before Handing Over!</p>
+                            <p className="text-sm font-bold">Amount: ₹{order.totalAmount}</p>
                           </div>
                         </div>
                       )}

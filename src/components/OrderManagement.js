@@ -373,9 +373,22 @@ const OrderManagement = ({ shopkeeper }) => {
                       {order.deliveryType === 'HOME_DELIVERY'
                         ? '🚚 Home' : '🏪 Pickup'}
                     </span>
-                    <span>💳 {order.paymentMethod}</span>
+                    <span className={order.paymentMethod === 'CASH' ? 'text-orange-600 font-bold' : ''}>
+                      {order.paymentMethod === 'CASH' ? '💵 CASH ON DELIVERY' : '💳 ' + order.paymentMethod}
+                    </span>
                     <span>{order.items?.length || 0} items</span>
                   </div>
+
+                  {/* COD Warning for Shopkeeper */}
+                  {order.paymentMethod === 'CASH' && (
+                    <div className="bg-amber-50 border border-amber-300 rounded-lg p-2 mb-3 flex items-start gap-2">
+                      <span className="text-amber-600 text-sm">⚠️</span>
+                      <div>
+                        <p className="text-xs font-bold text-amber-800">Cash on Delivery — DO NOT ask customer for payment</p>
+                        <p className="text-xs text-amber-700">Delivery boy will collect <strong>₹{order.totalAmount}</strong> from customer directly.</p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Items to Prepare */}
                   {order.items && order.items.length > 0 && (
