@@ -129,7 +129,7 @@ const OrderManagement = ({ shopkeeper }) => {
 
   const verifyPickupOtp = async (orderId, otp) => {
     try {
-      await api.post('/api/orders/verify-otp', { orderId, otp });
+      await api.post('/api/orders/verify-delivery-otp', { orderId, otp });
       fetchOrders();
       showNotif('🎉 Pickup OTP verified! Order completed.');
       setPickupOtpInputs(prev => ({ ...prev, [orderId]: { otp: '', error: '' } }));

@@ -16,6 +16,33 @@ function App() {
     return saved ? JSON.parse(saved) : null;
   });
   const [page, setPage] = useState('dashboard');
+  const [pendingOrdersCount, setPendingOrdersCount] = useState(0);
+
+  useEffect(() => {
+    if (!shopkeeper) return;
+
+    const fetchPendingOrders = async () => {
+      try {
+        // Fetch all shops to find this shopkeeper's shop ID
+        const shopsRes = await fetch('https://smartshop-backend-64zl.onrender.com/api/shops/all');
+        const shops = await shopsRes.json();
+        const myShop = shops.find(s => s.email === shopkeeper.email);
+        
+        if (myShop) {
+          const res = await fetch(`https://smartshop-backend-64zl.onrender.com/api/orders/shop/${myShop.id}`);
+          const orders = await res.json();
+          const pending = orders.filter(o => o.status === 'PENDING').length;
+          setPendingOrdersCount(pending);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchPendingOrders();
+    const interval = setInterval(fetchPendingOrders, 15000);
+    return () => clearInterval(interval);
+  }, [shopkeeper]);
 
   const handleLogin = (data) => {
     localStorage.setItem('token', data.token);
@@ -68,8 +95,13 @@ function App() {
             🏪 My Shop
           </button>
           <button onClick={() => setPage('orders')}
-            className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${page === 'orders' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
+            className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap relative ${page === 'orders' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
             📋 Orders
+            {pendingOrdersCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-sm animate-pulse">
+                {pendingOrdersCount > 9 ? '9+' : pendingOrdersCount}
+              </span>
+            )}
           </button>
           <button onClick={() => setPage('delivery')}
             className={`px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${page === 'delivery' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
