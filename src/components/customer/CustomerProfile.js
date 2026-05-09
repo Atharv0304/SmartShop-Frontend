@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const CustomerProfile = ({ customer, onLogout }) => {
   const [orders, setOrders]         = useState([]);
   const [activeTab, setActiveTab]   = useState('profile');
   const [loading, setLoading]       = useState(false);
+  const [fetchError, setFetchError]   = useState('');
   const [cancelModal, setCancelModal] = useState(null); // { orderId, shopName, amount }
   const [cancelReason, setCancelReason] = useState('');
   const [cancelling, setCancelling] = useState(false);
@@ -37,12 +38,9 @@ const CustomerProfile = ({ customer, onLogout }) => {
   }, []);
 
   const fetchOrders = async (isPolling = false) => {
-    if (!isPolling) setLoading(true);
+    if (!isPolling) { setLoading(true); setFetchError(''); }
     try {
-      const res = await axios.get(
-        `https://smartshop-backend-64zl.onrender.com/api/orders/customer/${customer.id}`,
-        { headers: { Authorization: `Bearer ${localStorage.getItem('customerToken')}` }}
-      );
+      const res = await api.get(`/api/orders/customer/${customer.id}`);
       const sorted = [...res.data].sort((a, b) => b.id - a.id);
       
       if (isPolling && ordersRef.current.length > 0) {
@@ -55,7 +53,10 @@ const CustomerProfile = ({ customer, onLogout }) => {
       ordersRef.current = sorted;
       setOrders(sorted);
     } catch (err) {
-      console.error(err);
+      console.error('Order fetch error:', err);
+      if (!isPolling) {
+        setFetchError('⚠️ Could not load orders. Backend may be waking up. Please wait and refresh.');
+      }
     }
     if (!isPolling) setLoading(false);
   };
@@ -64,10 +65,8 @@ const CustomerProfile = ({ customer, onLogout }) => {
     if (!cancelReason.trim()) return;
     setCancelling(true);
     try {
-      await axios.put(
-        `https://smartshop-backend-64zl.onrender.com/api/orders/cancel/${cancelModal.orderId}?customerId=${customer.id}&reason=${encodeURIComponent(cancelReason)}`,
-        {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem('customerToken')}` }}
+      await api.put(
+        `/api/orders/cancel/${cancelModal.orderId}?customerId=${customer.id}&reason=${encodeURIComponent(cancelReason)}`
       );
       setCancelMsg('✅ Order cancelled successfully!');
       fetchOrders();
@@ -108,9 +107,7 @@ const CustomerProfile = ({ customer, onLogout }) => {
   const handleDeleteAccount = async () => {
     if (window.confirm("⚠️ Are you sure you want to permanently delete your account? This action cannot be undone.")) {
       try {
-        await axios.delete(`https://smartshop-backend-64zl.onrender.com/api/customer/profile/${customer.id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('customerToken')}` }
-        });
+        await api.delete(`/api/customer/profile/${customer.id}`);
         alert("Your account has been deleted successfully.");
         onLogout();
       } catch (err) {
@@ -241,9 +238,16 @@ const CustomerProfile = ({ customer, onLogout }) => {
         {/* Orders Tab */}
         {activeTab === 'orders' && (
           <div>
+            {fetchError && (
+              <div className="bg-orange-50 border border-orange-200 text-orange-700 px-4 py-3 rounded-xl text-sm mb-4 flex items-center gap-2">
+                <span>⚠️</span>
+                <span>{fetchError}</span>
+                <button onClick={() => fetchOrders(false)} className="ml-auto text-orange-600 font-bold hover:underline">Retry</button>
+              </div>
+            )}
             {loading ? (
               <div className="text-center py-8 text-gray-400">Loading orders...</div>
-            ) : orders.length === 0 ? (
+            ) : orders.length === 0 && !fetchError ? (
               <div className="text-center py-12 bg-white rounded-2xl shadow">
                 <p className="text-5xl mb-4">📭</p>
                 <p className="text-gray-500 font-medium">No orders yet!</p>
