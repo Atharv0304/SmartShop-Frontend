@@ -8,6 +8,7 @@ import Cart from './Cart';
 import CustomerProfile from './CustomerProfile';
 import NotificationPanel from './NotificationPanel';
 import ChatBot from './ChatBot';
+import NotificationBadge from '../NotificationBadge';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -74,6 +75,8 @@ const CustomerApp = ({ customer, onLogout }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [toastNotif, setToastNotif] = useState(null);
   const [lastSeenNotifId, setLastSeenNotifId] = useState(null);
+  // Per-tab notification badges
+  const [profileBadge, setProfileBadge] = useState(0);
   // Cross-shop confirm modal: holds the product the user tried to add
   const [switchShopConfirm, setSwitchShopConfirm] = useState(null);
 
@@ -104,6 +107,17 @@ const CustomerApp = ({ customer, onLogout }) => {
       const allNotifs = res.data;
       const unread = allNotifs.filter(n => !n.read);
       setUnreadCount(unread.length);
+
+      // Profile tab badge = order-related unread notifications
+      const profileNotifs = unread.filter(n =>
+        n.type === 'ORDER_PLACED' ||
+        n.type === 'ORDER_CONFIRMED' ||
+        n.type === 'ORDER_READY' ||
+        n.type === 'ORDER_DELIVERED' ||
+        n.type === 'ORDER_CANCELLED' ||
+        n.type === 'OTP_SENT'
+      );
+      setProfileBadge(profileNotifs.length);
 
       if (unread.length > 0) {
         const latestNotif = unread[0];
@@ -218,9 +232,11 @@ const CustomerApp = ({ customer, onLogout }) => {
               </span>
             )}
           </button>
-          <button onClick={() => setPage('profile')}
-            className={`px-4 py-2 rounded-lg font-medium transition text-sm ${page === 'profile' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
+          <button
+            onClick={() => { setPage('profile'); setProfileBadge(0); }}
+            className={`relative px-4 py-2 rounded-lg font-medium transition text-sm ${page === 'profile' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}>
             👤 Profile
+            <NotificationBadge count={profileBadge} />
           </button>
         </div>
         <div className="flex items-center gap-4">
