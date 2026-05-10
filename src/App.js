@@ -27,11 +27,24 @@ function ShopkeeperDashboard({ shopkeeper, onUpdate, onLogout }) {
     <button
       id={`nav-${tab}`}
       onClick={() => navigate(tab)}
-      className={`relative flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 text-sm whitespace-nowrap ${
-        page === tab
-          ? 'bg-white text-emerald-700 shadow-md scale-105'
-          : 'text-gray-600 hover:bg-white/70 hover:text-gray-800'
-      }`}
+      style={{
+        position: 'relative',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        padding: '8px 16px',
+        borderRadius: '10px',
+        fontWeight: 600,
+        fontSize: '14px',
+        whiteSpace: 'nowrap',
+        cursor: 'pointer',
+        border: 'none',
+        transition: 'all 0.2s ease',
+        background: page === tab ? '#ffffff' : 'transparent',
+        color: page === tab ? '#065f46' : '#6b7280',
+        boxShadow: page === tab ? '0 1px 8px rgba(0,0,0,0.1)' : 'none',
+        transform: page === tab ? 'scale(1.04)' : 'scale(1)',
+      }}
     >
       {label}
       <NotificationBadge count={badges[tab]} pulse={isPulse} />
@@ -43,14 +56,15 @@ function ShopkeeperDashboard({ shopkeeper, onUpdate, onLogout }) {
       {/* ── Sticky Navbar ────────────────────────────────────────────── */}
       <nav style={{
         position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(255,255,255,0.95)',
+        background: 'rgba(255,255,255,0.97)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid #e5e7eb',
         boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
         padding: '0 24px',
-        height: '68px',
+        minHeight: '76px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: '16px'
+        gap: '16px',
+        overflow: 'visible',
       }}>
         {/* Brand */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
@@ -67,12 +81,17 @@ function ShopkeeperDashboard({ shopkeeper, onUpdate, onLogout }) {
           </div>
         </div>
 
-        {/* Nav Tabs */}
+        {/* Nav Tabs — paddingTop:14px makes room for absolute-positioned badges */}
         <div style={{
           display: 'flex', gap: '4px', alignItems: 'center',
-          background: '#f3f4f6', padding: '5px', borderRadius: '14px',
-          border: '1px solid #e5e7eb', overflowX: 'auto', flexShrink: 1,
-          scrollbarWidth: 'none'
+          background: '#f3f4f6',
+          padding: '14px 6px 6px 6px',
+          borderRadius: '14px',
+          border: '1px solid #e5e7eb',
+          overflowX: 'auto',
+          overflowY: 'visible',
+          flexShrink: 1,
+          scrollbarWidth: 'none',
         }}>
           {navBtn('dashboard', '🏠 Dashboard')}
           {navBtn('list',      '📦 Inventory')}

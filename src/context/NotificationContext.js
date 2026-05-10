@@ -48,24 +48,23 @@ export const NotificationProvider = ({ shopkeeper, children }) => {
           const orders = Array.isArray(ordersRes) ? ordersRes : [];
           pendingOrders = orders.filter(o => o.status === 'PENDING').length;
 
-          // Delivery: count orders that are READY (waiting delivery assignment)
-          // or OUT_FOR_DELIVERY
+          // Delivery: READY orders (waiting delivery assignment)
           deliveryUpdates = orders.filter(o =>
             o.status === 'READY' || o.status === 'OUT_FOR_DELIVERY'
           ).length;
         } catch (_) {}
 
-        // ── 3. Inventory / Add Product: low-stock & out-of-stock ──────
+        // ── 3. Inventory: out-of-stock products ────────────────────────
         try {
           const productsRes = await api.get('/api/products/all');
           const myProducts = (productsRes.data || []).filter(
             p => p.shopkeeperEmail === shopkeeper.email
           );
 
-          // Inventory badge = products with quantity <= 5 (low/out of stock)
-          outOfStockCount = myProducts.filter(p => p.quantity <= 5).length;
+          // Inventory badge = truly out of stock (quantity = 0)
+          outOfStockCount = myProducts.filter(p => p.quantity === 0).length;
 
-          // Alerts badge = expiring within 7 days
+          // Alerts badge = products expiring within 7 days
           const today = new Date();
           expiryAlertCount = myProducts.filter(p => {
             if (!p.expiryDate) return false;
@@ -74,20 +73,10 @@ export const NotificationProvider = ({ shopkeeper, children }) => {
             );
             return diff >= 0 && diff <= 7;
           }).length;
-
-          // Add Product badge: pending products (quantity = 0 = out of stock, needs restock)
-          // We re-use outOfStockCount here as "action needed"
         } catch (_) {}
-
-        // ── 4. Shop badge: check if shop profile is incomplete ────────
-        if (myShop) {
-          const missing = ['shopName', 'address', 'category', 'openTime', 'closeTime', 'latitude']
-            .filter(k => !myShop[k]).length;
-          shopUpdates = missing; // each missing field = 1 update needed
-        }
       }
 
-      // ── 5. Profile badge: unread shopkeeper notifications ──────────
+      // ── 4. Profile badge: unread notifications ─────────────────────
       let profileBadge = 0;
       try {
         const notifRes = await api.get(
@@ -97,15 +86,12 @@ export const NotificationProvider = ({ shopkeeper, children }) => {
         profileBadge = notifs.filter(n => !n.read).length;
       } catch (_) {}
 
-      // ── 6. Dashboard badge: sum of everything happening ─────────────
-      const dashboardBadge = pendingOrders + expiryAlertCount;
-
       setBadges({
-        dashboard: dashboardBadge,
+        dashboard: 0,          // Dashboard is the home page — no badge
         inventory: outOfStockCount,
-        addProduct: outOfStockCount > 0 ? 1 : 0, // prompt to restock
+        addProduct: 0,         // Not a notification destination
         alerts: expiryAlertCount,
-        shop: shopUpdates,
+        shop: 0,               // Shop setup is not an urgent notification
         orders: pendingOrders,
         delivery: deliveryUpdates,
         profile: profileBadge,
