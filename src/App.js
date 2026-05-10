@@ -27,10 +27,10 @@ function ShopkeeperDashboard({ shopkeeper, onUpdate, onLogout }) {
     <button
       id={`nav-${tab}`}
       onClick={() => navigate(tab)}
-      className={`relative px-4 py-2 rounded-lg font-bold transition text-sm whitespace-nowrap ${
+      className={`relative flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 text-sm whitespace-nowrap ${
         page === tab
-          ? 'bg-white text-emerald-700 shadow-sm'
-          : 'text-gray-600 hover:bg-white/50'
+          ? 'bg-white text-emerald-700 shadow-md scale-105'
+          : 'text-gray-600 hover:bg-white/70 hover:text-gray-800'
       }`}
     >
       {label}
@@ -41,32 +41,63 @@ function ShopkeeperDashboard({ shopkeeper, onUpdate, onLogout }) {
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* ── Sticky Navbar ────────────────────────────────────────────── */}
-      <nav className="glass sticky top-0 z-50 px-6 py-4 flex items-center justify-between shadow-sm">
-        <h1 className="text-2xl font-extrabold text-gradient flex items-center gap-2">
-          <span>🛒</span> Smart Store{' '}
-          <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md ml-2 border border-emerald-200">
-            Shopkeeper
-          </span>
-        </h1>
+      <nav style={{
+        position: 'sticky', top: 0, zIndex: 50,
+        background: 'rgba(255,255,255,0.95)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid #e5e7eb',
+        boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
+        padding: '0 24px',
+        height: '68px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        gap: '16px'
+      }}>
+        {/* Brand */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+          <span style={{ fontSize: '28px' }}>🛒</span>
+          <div>
+            <span style={{ fontSize: '18px', fontWeight: 800, color: '#065f46', letterSpacing: '-0.5px' }}>
+              Smart Store
+            </span>
+            <span style={{
+              marginLeft: '8px', fontSize: '11px', fontWeight: 700,
+              background: '#d1fae5', color: '#065f46',
+              padding: '2px 8px', borderRadius: '6px', border: '1px solid #a7f3d0'
+            }}>Shopkeeper</span>
+          </div>
+        </div>
 
-        <div className="flex gap-2 bg-gray-100/50 p-1 rounded-xl border border-gray-200/50 overflow-x-auto hide-scrollbar">
+        {/* Nav Tabs */}
+        <div style={{
+          display: 'flex', gap: '4px', alignItems: 'center',
+          background: '#f3f4f6', padding: '5px', borderRadius: '14px',
+          border: '1px solid #e5e7eb', overflowX: 'auto', flexShrink: 1,
+          scrollbarWidth: 'none'
+        }}>
           {navBtn('dashboard', '🏠 Dashboard')}
           {navBtn('list',      '📦 Inventory')}
           {navBtn('add',       '➕ Add Product')}
-          {navBtn('alerts',    '🔔 Alerts',    true)}   {/* pulse on urgent */}
+          {navBtn('alerts',    '🔔 Alerts',    true)}
           {navBtn('shop',      '🏪 My Shop')}
-          {navBtn('orders',    '📋 Orders',    true)}   {/* pulse on pending orders */}
+          {navBtn('orders',    '📋 Orders',    true)}
           {navBtn('delivery',  '🚴 Delivery')}
           {navBtn('profile',   '👤 Profile')}
         </div>
 
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-bold text-gray-700 hidden md:block">
+        {/* User + Logout */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+          <span style={{ fontSize: '13px', fontWeight: 700, color: '#374151' }}>
             👤 {shopkeeper.name}
           </span>
           <button
             onClick={onLogout}
-            className="bg-gray-100 hover:bg-rose-50 hover:text-rose-600 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold transition border border-gray-200 hover:border-rose-200"
+            style={{
+              background: '#f9fafb', color: '#dc2626', border: '1px solid #fca5a5',
+              padding: '8px 18px', borderRadius: '10px', fontSize: '13px',
+              fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s'
+            }}
+            onMouseEnter={e => e.target.style.background = '#fee2e2'}
+            onMouseLeave={e => e.target.style.background = '#f9fafb'}
           >
             Logout
           </button>
