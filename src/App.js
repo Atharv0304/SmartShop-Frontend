@@ -23,105 +23,109 @@ function ShopkeeperDashboard({ shopkeeper, onUpdate, onLogout }) {
     clearBadge(tab);
   };
 
-  const navBtn = (tab, label, isPulse = false) => (
-    <button
-      id={`nav-${tab}`}
-      onClick={() => navigate(tab)}
-      style={{
-        position: 'relative',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '6px',
-        padding: '8px 16px',
-        borderRadius: '10px',
-        fontWeight: 600,
-        fontSize: '14px',
-        whiteSpace: 'nowrap',
-        cursor: 'pointer',
-        border: 'none',
-        transition: 'all 0.2s ease',
-        background: page === tab ? '#ffffff' : 'transparent',
-        color: page === tab ? '#065f46' : '#6b7280',
-        boxShadow: page === tab ? '0 1px 8px rgba(0,0,0,0.1)' : 'none',
-        transform: page === tab ? 'scale(1.04)' : 'scale(1)',
-      }}
-    >
-      {label}
-      <NotificationBadge count={badges[tab]} pulse={isPulse} />
-    </button>
-  );
+  const navBtn = (tab, label, isPulse = false) => {
+    const isActive = page === tab;
+    return (
+      <button
+        key={tab}
+        id={`nav-${tab}`}
+        onClick={() => navigate(tab)}
+        style={{
+          position: 'relative',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '10px 20px',
+          borderRadius: '10px',
+          fontWeight: 700,
+          fontSize: '15px',
+          whiteSpace: 'nowrap',
+          cursor: 'pointer',
+          border: 'none',
+          transition: 'all 0.18s ease',
+          background: isActive ? '#ffffff' : 'transparent',
+          color: isActive ? '#059669' : '#4b5563',
+          boxShadow: isActive ? '0 2px 12px rgba(0,0,0,0.12)' : 'none',
+          transform: isActive ? 'translateY(-1px)' : 'translateY(0)',
+          marginTop: '10px',   /* space above for badge */
+        }}
+      >
+        {label}
+        <NotificationBadge count={badges[tab]} pulse={isPulse} />
+      </button>
+    );
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      {/* ── Sticky Navbar ────────────────────────────────────────────── */}
+      {/* ── Two-row Sticky Navbar ──────────────────────────────────────── */}
       <nav style={{
         position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(255,255,255,0.97)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid #e5e7eb',
-        boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
-        padding: '0 24px',
-        minHeight: '76px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: '16px',
-        overflow: 'visible',
+        background: '#ffffff',
+        borderBottom: '2px solid #e5e7eb',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
       }}>
-        {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
-          <span style={{ fontSize: '28px' }}>🛒</span>
-          <div>
-            <span style={{ fontSize: '18px', fontWeight: 800, color: '#065f46', letterSpacing: '-0.5px' }}>
-              Smart Store
+        {/* ── Row 1: Brand + User ─────────────────────────────────────── */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '12px 28px',
+          borderBottom: '1px solid #f3f4f6',
+        }}>
+          {/* Brand */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '30px' }}>🛒</span>
+            <div>
+              <span style={{ fontSize: '20px', fontWeight: 900, color: '#065f46', letterSpacing: '-0.5px' }}>
+                Smart Store
+              </span>
+              <span style={{
+                marginLeft: '10px', fontSize: '11px', fontWeight: 700,
+                background: '#d1fae5', color: '#065f46',
+                padding: '3px 10px', borderRadius: '20px', border: '1px solid #a7f3d0'
+              }}>Shopkeeper</span>
+            </div>
+          </div>
+
+          {/* User + Logout */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: '#374151' }}>
+              👤 {shopkeeper.name}
             </span>
-            <span style={{
-              marginLeft: '8px', fontSize: '11px', fontWeight: 700,
-              background: '#d1fae5', color: '#065f46',
-              padding: '2px 8px', borderRadius: '6px', border: '1px solid #a7f3d0'
-            }}>Shopkeeper</span>
+            <button
+              onClick={onLogout}
+              style={{
+                background: '#fff1f2', color: '#dc2626', border: '1.5px solid #fca5a5',
+                padding: '8px 20px', borderRadius: '10px', fontSize: '14px',
+                fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#fee2e2'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#fff1f2'; }}
+            >
+              Logout
+            </button>
           </div>
         </div>
 
-        {/* Nav Tabs — paddingTop:14px makes room for absolute-positioned badges */}
+        {/* ── Row 2: Nav Tabs (full width) ────────────────────────────── */}
         <div style={{
-          display: 'flex', gap: '4px', alignItems: 'center',
-          background: '#f3f4f6',
-          padding: '14px 6px 6px 6px',
-          borderRadius: '14px',
-          border: '1px solid #e5e7eb',
+          display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+          gap: '4px',
+          padding: '0 20px 8px 20px',
+          background: '#f9fafb',
           overflowX: 'auto',
-          overflowY: 'visible',
-          flexShrink: 1,
           scrollbarWidth: 'none',
         }}>
           {navBtn('dashboard', '🏠 Dashboard')}
           {navBtn('list',      '📦 Inventory')}
           {navBtn('add',       '➕ Add Product')}
-          {navBtn('alerts',    '🔔 Alerts',    true)}
+          {navBtn('alerts',    '🔔 Alerts',   true)}
           {navBtn('shop',      '🏪 My Shop')}
-          {navBtn('orders',    '📋 Orders',    true)}
+          {navBtn('orders',    '📋 Orders',   true)}
           {navBtn('delivery',  '🚴 Delivery')}
           {navBtn('profile',   '👤 Profile')}
         </div>
-
-        {/* User + Logout */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-          <span style={{ fontSize: '13px', fontWeight: 700, color: '#374151' }}>
-            👤 {shopkeeper.name}
-          </span>
-          <button
-            onClick={onLogout}
-            style={{
-              background: '#f9fafb', color: '#dc2626', border: '1px solid #fca5a5',
-              padding: '8px 18px', borderRadius: '10px', fontSize: '13px',
-              fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s'
-            }}
-            onMouseEnter={e => e.target.style.background = '#fee2e2'}
-            onMouseLeave={e => e.target.style.background = '#f9fafb'}
-          >
-            Logout
-          </button>
-        </div>
       </nav>
+
 
       {/* ── Page Content ─────────────────────────────────────────────── */}
       {page === 'dashboard' && <Dashboard shopkeeper={shopkeeper} />}
